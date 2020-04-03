@@ -4,15 +4,20 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    [SerializeField] private float currentSpeed;
-    [SerializeField] private float sprintModifier;
+    [Header("Speed")]
+    [SerializeField] private float defaultSpeed = 10f;
+    [SerializeField] private float sprintModifier = 1.75f;
+
+    [Header("Jump")]
     [SerializeField] private Vector3 jumpForce;
     [SerializeField] private Vector3 gravityForce;
     [SerializeField] private float jumpThreshold;
 
+    private float currentSpeed;
     private float diagonalSpeed;
-    private float defaultSpeed;
+
     private bool isGrounded;
+
     private float previousHeight;
     private Rigidbody rb;
     private Camera cam;
@@ -23,9 +28,8 @@ public class PlayerController : MonoBehaviour
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
         cam = FindObjectOfType<Camera>();
-
         rb = GetComponent<Rigidbody>();
-        defaultSpeed = currentSpeed;
+        currentSpeed = defaultSpeed;
         diagonalSpeed = currentSpeed * 0.87f;
     }
 
@@ -75,16 +79,18 @@ public class PlayerController : MonoBehaviour
         translation *= Time.fixedDeltaTime;
         strafe *= Time.fixedDeltaTime;
 
+        // Rotate the character upon receiving movement input
         if (Input.GetAxis("Move") != 0 || Input.GetAxis("Strafe") != 0)
         {
+            // Direction to rotate toward is the inverse of the player => camera direction
+            Vector3 camPos = new Vector3(cam.transform.position.x, transform.position.y, cam.transform.position.z);
+            Vector3 targetDirection = transform.position - camPos;
 
-            // TODO: Gotta fix the x-rotation. It should stay clamped at 0 when moving. Otherwise I get my little guy Naruto running.
-            Vector3 targetDirection = transform.position - cam.transform.position;
-
+            // Determine necessary rotation to face the target direction
             float singleStep = currentSpeed * Time.deltaTime;
-
             Vector3 newDirection = Vector3.RotateTowards(transform.forward, targetDirection, singleStep, 0.0f);
 
+            // Apply rotation and movement
             transform.rotation = Quaternion.LookRotation(newDirection);
             transform.Translate(strafe, 0, translation);
         }
@@ -109,7 +115,7 @@ public class PlayerController : MonoBehaviour
         return false;
     }
 
-    void OnCollisionStay(Collision col)
+    void OnTriggerStay(Collider col)
     {
         if (col.gameObject.CompareTag("Ground"))
         {

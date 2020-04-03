@@ -15,7 +15,7 @@ public class CameraController : MonoBehaviour
         pitch += rotationSpeed * Input.GetAxis("CameraYaw");
         yaw += rotationSpeed * Input.GetAxis("Rotate") * Time.deltaTime;
 
-        pitch = Mathf.Clamp(pitch, -90f, 90f);
+        pitch = Mathf.Clamp(pitch, -30f, 30f);
         
         while (yaw < 0f)
         {

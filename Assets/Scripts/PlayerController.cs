@@ -13,17 +13,16 @@ public class PlayerController : MonoBehaviour
     private float diagonalSpeed;
     private float defaultSpeed;
     private bool isGrounded;
-
     private float previousHeight;
-    
-
     private Rigidbody rb;
+    private Camera cam;
 
     // Start is called before the first frame update
     void Start()
     {
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
+        cam = FindObjectOfType<Camera>();
 
         rb = GetComponent<Rigidbody>();
         defaultSpeed = currentSpeed;
@@ -63,7 +62,6 @@ public class PlayerController : MonoBehaviour
         // Control player walking and rotating
         float translation = Input.GetAxis("Move") * currentSpeed;
         float strafe = Input.GetAxis("Strafe") * currentSpeed;
-        float rotation = Input.GetAxis("Rotate");
 
         if (Mathf.Abs(strafe) > 0 && Mathf.Abs(translation) > 0)
         {
@@ -76,10 +74,20 @@ public class PlayerController : MonoBehaviour
 
         translation *= Time.fixedDeltaTime;
         strafe *= Time.fixedDeltaTime;
-        rotation *= Time.fixedDeltaTime;
 
-        transform.Translate(strafe, 0, translation);
-        transform.Rotate(0, rotation, 0);
+        if (Input.GetAxis("Move") != 0 || Input.GetAxis("Strafe") != 0)
+        {
+
+            // TODO: Gotta fix the x-rotation. It should stay clamped at 0 when moving. Otherwise I get my little guy Naruto running.
+            Vector3 targetDirection = transform.position - cam.transform.position;
+
+            float singleStep = currentSpeed * Time.deltaTime;
+
+            Vector3 newDirection = Vector3.RotateTowards(transform.forward, targetDirection, singleStep, 0.0f);
+
+            transform.rotation = Quaternion.LookRotation(newDirection);
+            transform.Translate(strafe, 0, translation);
+        }
     }
 
     private IEnumerator Jump()

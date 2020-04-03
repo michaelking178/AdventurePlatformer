@@ -142,8 +142,8 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!136 &69655290
-CapsuleCollider:
+--- !u!65 &69655290
+BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -152,10 +152,9 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 0.5
-  m_Height: 2
-  m_Direction: 1
-  m_Center: {x: 0, y: 0, z: 0}
+  serializedVersion: 2
+  m_Size: {x: 0.9786072, y: 1.9572145, z: 0.97860724}
+  m_Center: {x: 0.010696411, y: 0, z: 0}
 --- !u!23 &69655291
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -214,7 +213,7 @@ Transform:
   m_LocalPosition: {x: 0, y: 1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 1489361644}
+  - {fileID: 2065307574}
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -355,7 +354,7 @@ GameObject:
   - component: {fileID: 107578182}
   - component: {fileID: 107578181}
   - component: {fileID: 107578180}
-  m_Layer: 0
+  m_Layer: 15
   m_Name: Platform Cube
   m_TagString: Ground
   m_Icon: {fileID: 0}
@@ -448,7 +447,7 @@ GameObject:
   - component: {fileID: 120815581}
   - component: {fileID: 120815580}
   - component: {fileID: 120815579}
-  m_Layer: 0
+  m_Layer: 15
   m_Name: Wall (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -529,37 +528,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 90.00001, z: 0}
---- !u!1 &320086274
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 320086278}
-  m_Layer: 0
-  m_Name: Camera Arm
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &320086278
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 320086274}
-  m_LocalRotation: {x: 0.000000014901161, y: 5.641719e-22, z: 1.8620664e-26, w: 1}
-  m_LocalPosition: {x: 0, y: 2, z: 0}
-  m_LocalScale: {x: 0.5, y: 4.61, z: 0.5}
-  m_Children:
-  - {fileID: 963194228}
-  m_Father: {fileID: 1489361644}
-  m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &347992211
 GameObject:
   m_ObjectHideFlags: 0
@@ -572,7 +540,7 @@ GameObject:
   - component: {fileID: 347992214}
   - component: {fileID: 347992213}
   - component: {fileID: 347992212}
-  m_Layer: 0
+  m_Layer: 15
   m_Name: Ground Plane
   m_TagString: Ground
   m_Icon: {fileID: 0}
@@ -666,7 +634,7 @@ GameObject:
   - component: {fileID: 618547006}
   - component: {fileID: 618547005}
   - component: {fileID: 618547004}
-  m_Layer: 0
+  m_Layer: 15
   m_Name: Wall (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -851,7 +819,7 @@ GameObject:
   - component: {fileID: 679393485}
   - component: {fileID: 679393484}
   - component: {fileID: 679393483}
-  m_Layer: 0
+  m_Layer: 15
   m_Name: Wall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1036,7 +1004,7 @@ GameObject:
   - component: {fileID: 765557849}
   - component: {fileID: 765557848}
   - component: {fileID: 765557847}
-  m_Layer: 0
+  m_Layer: 15
   m_Name: Platform Cube (6)
   m_TagString: Ground
   m_Icon: {fileID: 0}
@@ -1194,13 +1162,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
-  m_LocalRotation: {x: 0.6518511, y: 4.1918266e-22, z: -2.8086316e-21, w: 0.75834703}
-  m_LocalPosition: {x: 0, y: 0.75, z: -0}
+  m_LocalRotation: {x: 0.13052596, y: -0, z: -0, w: 0.99144495}
+  m_LocalPosition: {x: 0, y: 2.25, z: -5.25}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 320086278}
+  m_Father: {fileID: 2065307574}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 81.36301, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 15.000001, y: 0, z: 0}
 --- !u!114 &963194229
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1247,7 +1215,7 @@ GameObject:
   - component: {fileID: 1027991847}
   - component: {fileID: 1027991846}
   - component: {fileID: 1027991845}
-  m_Layer: 0
+  m_Layer: 15
   m_Name: Platform Cube (5)
   m_TagString: Ground
   m_Icon: {fileID: 0}
@@ -1340,7 +1308,7 @@ GameObject:
   - component: {fileID: 1053837850}
   - component: {fileID: 1053837849}
   - component: {fileID: 1053837848}
-  m_Layer: 0
+  m_Layer: 15
   m_Name: Platform Cube (7)
   m_TagString: Ground
   m_Icon: {fileID: 0}
@@ -1433,7 +1401,7 @@ GameObject:
   - component: {fileID: 1212132271}
   - component: {fileID: 1212132270}
   - component: {fileID: 1212132269}
-  m_Layer: 0
+  m_Layer: 15
   m_Name: Wall (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1526,7 +1494,7 @@ GameObject:
   - component: {fileID: 1251808992}
   - component: {fileID: 1251808991}
   - component: {fileID: 1251808990}
-  m_Layer: 0
+  m_Layer: 15
   m_Name: Platform Cube (1)
   m_TagString: Ground
   m_Icon: {fileID: 0}
@@ -1619,7 +1587,7 @@ GameObject:
   - component: {fileID: 1279533354}
   - component: {fileID: 1279533353}
   - component: {fileID: 1279533352}
-  m_Layer: 0
+  m_Layer: 15
   m_Name: Platform Cube (3)
   m_TagString: Ground
   m_Icon: {fileID: 0}
@@ -1700,50 +1668,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1489361640
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1489361644}
-  - component: {fileID: 1489361641}
-  m_Layer: 0
-  m_Name: Camera Pivot
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1489361641
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1489361640}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4c69e3f3c00a12b4883eb256c9093254, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!4 &1489361644
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1489361640}
-  m_LocalRotation: {x: -0.53983414, y: 1.40225584e-14, z: -2.1865622e-14, w: 0.8417714}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children:
-  - {fileID: 320086278}
-  m_Father: {fileID: 69655293}
-  m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: -65.345, y: 0, z: 0}
 --- !u!1 &1780940055
 GameObject:
   m_ObjectHideFlags: 0
@@ -1756,7 +1680,7 @@ GameObject:
   - component: {fileID: 1780940058}
   - component: {fileID: 1780940057}
   - component: {fileID: 1780940056}
-  m_Layer: 0
+  m_Layer: 15
   m_Name: Platform Cube (2)
   m_TagString: Ground
   m_Icon: {fileID: 0}
@@ -1849,7 +1773,7 @@ GameObject:
   - component: {fileID: 1977695134}
   - component: {fileID: 1977695133}
   - component: {fileID: 1977695132}
-  m_Layer: 0
+  m_Layer: 15
   m_Name: Platform Cube (4)
   m_TagString: Ground
   m_Icon: {fileID: 0}
@@ -1930,3 +1854,48 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 11
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &2065307573
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2065307574}
+  - component: {fileID: 2065307575}
+  m_Layer: 0
+  m_Name: Camera Pivot
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2065307574
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2065307573}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 963194228}
+  m_Father: {fileID: 69655293}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2065307575
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2065307573}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4c69e3f3c00a12b4883eb256c9093254, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rotationSpeed: 1

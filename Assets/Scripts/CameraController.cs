@@ -4,12 +4,28 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
-    float yaw;
+    [SerializeField] private float rotationSpeed = 1.0f;
+
+    private float pitch;
+    private float yaw;
 
     // This function is called every fixed framerate frame.
-    void FixedUpdate()
+    private void Update()
     {
-        yaw = Input.GetAxis("CameraYaw");
-        transform.Rotate(new Vector3(-yaw, 0, 0));
+        pitch += rotationSpeed * Input.GetAxis("CameraYaw");
+        yaw += rotationSpeed * Input.GetAxis("Rotate") * Time.deltaTime;
+
+        pitch = Mathf.Clamp(pitch, -90f, 90f);
+        
+        while (yaw < 0f)
+        {
+            yaw += 360f;
+        }
+        while (yaw > 360f)
+        {
+            yaw -= 360f;
+        }
+
+        transform.eulerAngles = new Vector3(-pitch, yaw, 0f);
     }
 }

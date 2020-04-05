@@ -10,7 +10,7 @@ public class CameraController : MonoBehaviour
     private float yaw;
 
     // This function is called every fixed framerate frame.
-    private void Update()
+    private void FixedUpdate()
     {
         pitch += rotationSpeed * Input.GetAxis("CameraYaw");
         yaw += rotationSpeed * Input.GetAxis("Rotate") * Time.deltaTime;

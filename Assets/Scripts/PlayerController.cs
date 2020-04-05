@@ -4,6 +4,12 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
+    private enum State
+    {
+        GROUNDED,
+        JUMPING
+    };
+
     [Header("Speed")]
     [SerializeField] private float defaultSpeed = 10f;
     [SerializeField] private float sprintModifier = 1.75f;
@@ -14,37 +20,33 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float jumpThreshold;
 
     private float currentSpeed;
-    private float diagonalSpeed;
-
-    private bool isGrounded;
-
+    private float sprintSpeed;
     private float previousHeight;
+    private State state = State.GROUNDED;
     private Rigidbody rb;
     private Camera cam;
+    private Animator anim;
 
     // Start is called before the first frame update
     void Start()
     {
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
+
+        anim = GetComponent<Animator>();
         cam = FindObjectOfType<Camera>();
         rb = GetComponent<Rigidbody>();
         currentSpeed = defaultSpeed;
-        diagonalSpeed = currentSpeed * 0.87f;
+        sprintSpeed = defaultSpeed * sprintModifier;
     }
 
     void Update()
     {
         DebugStuff();
+        HandleInput();
+        CheckForGround();
 
-        if (Input.GetButtonDown("Jump") && isGrounded)
-        {
-            StartCoroutine(Jump());
-        }
-        if(!isGrounded && ReachedJumpPeak())
-        {
-            rb.AddForce(gravityForce);
-        }
+        Debug.Log(state);
     }
 
     void FixedUpdate()
@@ -54,54 +56,67 @@ public class PlayerController : MonoBehaviour
 
     private void Movement()
     {
+        // These two will be used to slow down the running animation so that when sprinting, the character looks like they are running faster.
+        float moveAxis = Input.GetAxis("Move");
+        float strafeAxis = Input.GetAxis("Strafe");
+
         if (Input.GetButton("Sprint"))
         {
-            currentSpeed *= sprintModifier;
-        }
-        if (Input.GetButtonUp("Sprint"))
-        {
-            currentSpeed = defaultSpeed;
-        }
-
-        // Control player walking and rotating
-        float translation = Input.GetAxis("Move") * currentSpeed;
-        float strafe = Input.GetAxis("Strafe") * currentSpeed;
-
-        if (Mathf.Abs(strafe) > 0 && Mathf.Abs(translation) > 0)
-        {
-            currentSpeed = diagonalSpeed;
+            currentSpeed = sprintSpeed;
         }
         else
         {
             currentSpeed = defaultSpeed;
+            moveAxis *= 0.95f;
+            strafeAxis *= 0.95f;
         }
 
-        translation *= Time.fixedDeltaTime;
-        strafe *= Time.fixedDeltaTime;
+        anim.SetFloat("Speed", moveAxis);
+        anim.SetFloat("Strafe", strafeAxis);
+
+        // Control player walking and rotating
+        float translation = Input.GetAxis("Move") * Time.fixedDeltaTime * currentSpeed; ;
+        float strafe = Input.GetAxis("Strafe") * Time.fixedDeltaTime * currentSpeed;
 
         // Rotate the character upon receiving movement input
         if (Input.GetAxis("Move") != 0 || Input.GetAxis("Strafe") != 0)
         {
-            // Direction to rotate toward is the inverse of the player => camera direction
+            // Direction to rotate toward
             Vector3 camPos = new Vector3(cam.transform.position.x, transform.position.y, cam.transform.position.z);
             Vector3 targetDirection = transform.position - camPos;
 
-            // Determine necessary rotation to face the target direction
-            float singleStep = currentSpeed * Time.deltaTime;
+            // Determine rotation needed to face the target direction
+            float singleStep = currentSpeed * Time.fixedDeltaTime;
             Vector3 newDirection = Vector3.RotateTowards(transform.forward, targetDirection, singleStep, 0.0f);
 
-            // Apply rotation and movement
+            // Apply rotation
             transform.rotation = Quaternion.LookRotation(newDirection);
-            transform.Translate(strafe, 0, translation);
         }
+
+        // Apply movement
+        transform.Translate(strafe, 0, translation);
     }
 
-    private IEnumerator Jump()
+    private void HandleInput()
     {
-        // Control player jumping
-        rb.AddForce(jumpForce, ForceMode.Impulse);
-        yield return new WaitForSeconds(0.1f);
-        isGrounded = false;
+        switch (state)
+        {
+            case State.GROUNDED:
+                if (Input.GetButtonDown("Jump"))
+                {
+                    rb.AddForce(jumpForce, ForceMode.Impulse);
+                    anim.SetTrigger("Jump");
+                }
+                break;
+            case State.JUMPING:
+                if (ReachedJumpPeak())
+                {
+                    rb.AddForce(gravityForce);
+                }
+                break;
+            default:
+                break;
+        }
     }
 
     private bool ReachedJumpPeak()
@@ -115,11 +130,25 @@ public class PlayerController : MonoBehaviour
         return false;
     }
 
-    void OnTriggerStay(Collider col)
+    private void CheckForGround()
     {
-        if (col.gameObject.CompareTag("Ground"))
+        RaycastHit hit;
+        Ray ray = new Ray
         {
-            isGrounded = true;
+            origin = new Vector3(transform.position.x, transform.position.y + 1f, transform.position.z),
+            direction = Vector3.down
+        };
+
+        if (Physics.Raycast(ray, out hit, 1.05f))
+        {
+            if (hit.transform.CompareTag("Ground"))
+            {
+                state = State.GROUNDED;
+            }
+        }
+        else
+        {
+            state = State.JUMPING;
         }
     }
 

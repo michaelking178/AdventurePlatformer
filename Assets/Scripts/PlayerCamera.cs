@@ -11,6 +11,7 @@ public class PlayerCamera : MonoBehaviour
     private RaycastHit hit;
 
     [SerializeField] private float lerpDelta = 0.1f;
+    [SerializeField] private Vector3 cameraZoomOffset = new Vector3();
 
     void Start()
     {
@@ -30,7 +31,7 @@ public class PlayerCamera : MonoBehaviour
 
             if (distanceToCam >= distanceToCollision)
             {                
-                cam.transform.position = Vector3.MoveTowards(cam.transform.position, transform.position, lerpDelta);
+                cam.transform.position = Vector3.MoveTowards(cam.transform.position, transform.position + cameraZoomOffset, lerpDelta);
                 distanceToCam = Vector3.Distance(transform.position, cam.transform.position);
             }
         }
@@ -44,7 +45,7 @@ public class PlayerCamera : MonoBehaviour
     {
         if (distanceToCam < defaultDistanceToCam)
         {
-            Vector3 resetPos = cam.transform.position + direction;
+            Vector3 resetPos = cam.transform.position - cameraZoomOffset + direction;
             Vector3 newCamPos = Vector3.Lerp(cam.transform.position, resetPos, lerpDelta);
             cam.transform.position = newCamPos;
         }

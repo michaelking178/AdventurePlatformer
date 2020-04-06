@@ -4,16 +4,19 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
+    [SerializeField] private float rotationSpeed = 1.0f;
+
     private float pitch;
     private float yaw;
 
     private DefaultControls controls;
+    private Vector2 cameraInput;
 
     private void Awake()
     {
         controls = new DefaultControls();
-        controls.Gameplay.Look.performed += ctx => Rotate(ctx.ReadValue<Vector2>());
-        controls.Gameplay.Look.canceled += ctx => Rotate(ctx.ReadValue<Vector2>());
+        controls.Gameplay.Look.performed += ctx => cameraInput = ctx.ReadValue<Vector2>();
+        controls.Gameplay.Look.canceled += ctx => cameraInput = ctx.ReadValue<Vector2>();
     }
 
     private void OnEnable()
@@ -26,10 +29,15 @@ public class CameraController : MonoBehaviour
         controls.Disable();
     }
 
+    private void FixedUpdate()
+    {
+        Rotate(cameraInput);
+    }
+
     private void Rotate(Vector2 rotation)
     {
-        pitch += rotation.y;
-        yaw += rotation.x;
+        pitch += rotation.y * rotationSpeed;
+        yaw += rotation.x * rotationSpeed;
 
         pitch = Mathf.Clamp(pitch, -30f, 30f);
 

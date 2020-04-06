@@ -18,25 +18,29 @@ public class PlayerController : MonoBehaviour
     [Header("Jump")]
     [SerializeField] private Vector3 jumpForce;
     [SerializeField] private Vector3 gravityForce;
-    [SerializeField] private float jumpThreshold;
 
     private float currentSpeed;
     private float sprintSpeed;
     private float previousHeight;
-    float cameraXOffset;
-    private State state = State.GROUNDED;
+    private State state;
     private Rigidbody rb;
     private Camera cam;
     private Animator anim;
+    private bool isSprinting;
 
     private DefaultControls controls;
     private Vector2 movementInput;
+    RaycastHit hit;
+    Ray ray;
 
     private void Awake()
     {
         controls = new DefaultControls();
         controls.Gameplay.Move.performed += ctx => movementInput = ctx.ReadValue<Vector2>();
+        controls.Gameplay.Move.canceled += ctx => movementInput = ctx.ReadValue<Vector2>();
         controls.Gameplay.Jump.performed += ctx => Jump();
+        controls.Gameplay.Sprint.performed += ctx => isSprinting = ctx.ReadValueAsButton();
+        controls.Gameplay.Sprint.canceled += ctx => isSprinting = ctx.ReadValueAsButton();
     }
 
     private void OnEnable()
@@ -47,13 +51,13 @@ public class PlayerController : MonoBehaviour
     private void OnDisable()
     {
         controls.Gameplay.Move.performed -= ctx => movementInput = ctx.ReadValue<Vector2>();
+        controls.Gameplay.Move.canceled -= ctx => movementInput = ctx.ReadValue<Vector2>();
         controls.Gameplay.Jump.performed -= ctx => Jump();
         controls.Disable();
     }
 
-    void Start()
+    private void Start()
     {
-        Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
 
         anim = GetComponent<Animator>();
@@ -61,21 +65,19 @@ public class PlayerController : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         currentSpeed = defaultSpeed;
         sprintSpeed = defaultSpeed * sprintModifier;
-
-        cameraXOffset = cam.transform.position.x;
     }
 
-    void Update()
+    private void Update()
     {
         DebugStuff();
         CheckState();
     }
 
-    void FixedUpdate()
+    private void FixedUpdate()
     {
         Move(movementInput);
-
-        if (state == State.JUMPING && ReachedJumpPeak())
+        
+        if (state == State.JUMPING)
         {
             rb.AddForce(gravityForce);
         }
@@ -83,27 +85,13 @@ public class PlayerController : MonoBehaviour
 
     private void Move(Vector2 movementAxis)
     {
-        Debug.Log(movementAxis);
-
-        // Slow the running animation so that when sprinting, the character looks like they are running faster.
-        float animMovementAxis = movementAxis.y;
-        float animStrafeAxis = movementAxis.x;
-
-        if (Input.GetButton("Sprint"))
-        {
-            currentSpeed = sprintSpeed;
-        }
-        else
-        {
-            currentSpeed = defaultSpeed;
-            animMovementAxis *= 0.95f;
-            animStrafeAxis *= 0.95f;
-        }
-
-        anim.SetFloat("Speed", animMovementAxis);
-        anim.SetFloat("Strafe", animStrafeAxis);
+        CheckForSprint(movementAxis);
 
         Vector3 movement = new Vector3(movementAxis.x * Time.fixedDeltaTime * currentSpeed, 0f, movementAxis.y * Time.fixedDeltaTime * currentSpeed);
+        if (movement.z < 0f)
+        {
+            movement.z *= 0.5f;
+        }
         transform.Translate(movement);
 
         // Rotate the character upon receiving movement input
@@ -122,42 +110,45 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    private void CheckForSprint(Vector3 movementAxis)
+    {
+        // Slow the running animation so that when sprinting, the character looks like they are running faster.
+        float animMovementAxis = movementAxis.y;
+        float animStrafeAxis = movementAxis.x;
+
+        if (isSprinting)
+        {
+            currentSpeed = sprintSpeed;
+        }
+        else
+        {
+            currentSpeed = defaultSpeed;
+            animMovementAxis *= 0.85f;
+            animStrafeAxis *= 0.85f;
+        }
+
+        anim.SetFloat("Speed", animMovementAxis);
+        anim.SetFloat("Strafe", animStrafeAxis);
+    }
+
     private void Jump()
     {
         if (state == State.GROUNDED)
         {
             rb.AddForce(jumpForce, ForceMode.Impulse);
             anim.SetTrigger("Jump");
+            state = State.JUMPING;
         }
-    }
-    
-    private bool ReachedJumpPeak()
-    {
-        float currentHeight = transform.position.y;
-        if (currentHeight - previousHeight < jumpThreshold)
-        {
-            return true;
-        }
-        previousHeight = currentHeight;
-        return false;
     }
 
     private void CheckState()
     {
-        RaycastHit hit;
-        Ray ray = new Ray
-        {
-            origin = new Vector3(transform.position.x, transform.position.y + 1f, transform.position.z),
-            direction = Vector3.down
-        };
+        ray.origin = new Vector3(transform.position.x, transform.position.y + 1f, transform.position.z);
+        ray.direction = Vector3.down;
 
-        if (Physics.Raycast(ray, out hit, 1.05f) && hit.transform.CompareTag("Ground"))
+        if (Physics.Raycast(ray, out hit, 1.01f) && hit.transform.CompareTag("Ground"))
         {
             state = State.GROUNDED;
-        }
-        else
-        {
-            state = State.JUMPING;
         }
     }
 

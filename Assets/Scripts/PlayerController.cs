@@ -23,6 +23,7 @@ public class PlayerController : MonoBehaviour
     private float currentSpeed;
     private float sprintSpeed;
     private float previousHeight;
+    float cameraXOffset;
     private State state = State.GROUNDED;
     private Rigidbody rb;
     private Camera cam;
@@ -60,12 +61,19 @@ public class PlayerController : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         currentSpeed = defaultSpeed;
         sprintSpeed = defaultSpeed * sprintModifier;
+
+        cameraXOffset = cam.transform.position.x;
     }
 
     void Update()
     {
         DebugStuff();
         CheckState();
+    }
+
+    void FixedUpdate()
+    {
+        Move(movementInput);
 
         if (state == State.JUMPING && ReachedJumpPeak())
         {
@@ -73,32 +81,29 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    void FixedUpdate()
-    {
-        Move(movementInput);
-    }
-
     private void Move(Vector2 movementAxis)
     {
-        //    // Slow the running animation so that when sprinting, the character looks like they are running faster.
-        //    float moveAxis = Input.GetAxis("Move");
-        //    float strafeAxis = Input.GetAxis("Strafe");
+        Debug.Log(movementAxis);
 
-        //    if (Input.GetButton("Sprint"))
-        //    {
-        //        currentSpeed = sprintSpeed;
-        //    }
-        //    else
-        //    {
-        //        currentSpeed = defaultSpeed;
-        //        moveAxis *= 0.95f;
-        //        strafeAxis *= 0.95f;
-        //    }
+        // Slow the running animation so that when sprinting, the character looks like they are running faster.
+        float animMovementAxis = movementAxis.y;
+        float animStrafeAxis = movementAxis.x;
 
-        anim.SetFloat("Speed", movementAxis.y);
-        anim.SetFloat("Strafe", movementAxis.x);
+        if (Input.GetButton("Sprint"))
+        {
+            currentSpeed = sprintSpeed;
+        }
+        else
+        {
+            currentSpeed = defaultSpeed;
+            animMovementAxis *= 0.95f;
+            animStrafeAxis *= 0.95f;
+        }
 
-        Vector3 movement = new Vector3(movementAxis.x * Time.deltaTime * currentSpeed, 0f, movementAxis.y * Time.deltaTime * currentSpeed);
+        anim.SetFloat("Speed", animMovementAxis);
+        anim.SetFloat("Strafe", animStrafeAxis);
+
+        Vector3 movement = new Vector3(movementAxis.x * Time.fixedDeltaTime * currentSpeed, 0f, movementAxis.y * Time.fixedDeltaTime * currentSpeed);
         transform.Translate(movement);
 
         // Rotate the character upon receiving movement input
@@ -125,6 +130,7 @@ public class PlayerController : MonoBehaviour
             anim.SetTrigger("Jump");
         }
     }
+    
     private bool ReachedJumpPeak()
     {
         float currentHeight = transform.position.y;

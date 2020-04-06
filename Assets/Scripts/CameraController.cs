@@ -4,29 +4,6 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
-    //private float pitch;
-    //private float yaw;
-
-    //// This function is called every fixed framerate frame.
-    //private void FixedUpdate()
-    //{
-    //    pitch += Input.GetAxis("CameraYaw");
-    //    yaw += Input.GetAxis("Rotate") * Time.deltaTime;
-
-    //    pitch = Mathf.Clamp(pitch, -30f, 30f);
-
-    //    while (yaw < 0f)
-    //    {
-    //        yaw += 360f;
-    //    }
-    //    while (yaw > 360f)
-    //    {
-    //        yaw -= 360f;
-    //    }
-
-    //    transform.eulerAngles = new Vector3(-pitch, yaw, 0f);
-    //}
-
     private float pitch;
     private float yaw;
 
@@ -37,7 +14,6 @@ public class CameraController : MonoBehaviour
         controls = new DefaultControls();
         controls.Gameplay.Look.performed += ctx => Rotate(ctx.ReadValue<Vector2>());
         controls.Gameplay.Look.canceled += ctx => Rotate(ctx.ReadValue<Vector2>());
-
     }
 
     private void OnEnable()

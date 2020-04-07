@@ -38,7 +38,7 @@
                     "interactions": ""
                 },
                 {
-                    "name": "Interact",
+                    "name": "Attack",
                     "type": "Button",
                     "id": "9174bbd6-5e48-4dce-ba05-a3b5b5f59f19",
                     "expectedControlType": "",
@@ -186,7 +186,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "PS4",
-                    "action": "Interact",
+                    "action": "Attack",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -197,7 +197,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard&Mouse",
-                    "action": "Interact",
+                    "action": "Attack",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

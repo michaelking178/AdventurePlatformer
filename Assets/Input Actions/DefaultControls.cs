@@ -51,7 +51,7 @@ public class @DefaultControls : IInputActionCollection, IDisposable
                     ""interactions"": """"
                 },
                 {
-                    ""name"": ""Interact"",
+                    ""name"": ""Attack"",
                     ""type"": ""Button"",
                     ""id"": ""9174bbd6-5e48-4dce-ba05-a3b5b5f59f19"",
                     ""expectedControlType"": """",
@@ -199,7 +199,7 @@ public class @DefaultControls : IInputActionCollection, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""PS4"",
-                    ""action"": ""Interact"",
+                    ""action"": ""Attack"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -210,7 +210,7 @@ public class @DefaultControls : IInputActionCollection, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Keyboard&Mouse"",
-                    ""action"": ""Interact"",
+                    ""action"": ""Attack"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -253,7 +253,7 @@ public class @DefaultControls : IInputActionCollection, IDisposable
         m_Gameplay_Look = m_Gameplay.FindAction("Look", throwIfNotFound: true);
         m_Gameplay_Jump = m_Gameplay.FindAction("Jump", throwIfNotFound: true);
         m_Gameplay_Sprint = m_Gameplay.FindAction("Sprint", throwIfNotFound: true);
-        m_Gameplay_Interact = m_Gameplay.FindAction("Interact", throwIfNotFound: true);
+        m_Gameplay_Attack = m_Gameplay.FindAction("Attack", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -307,7 +307,7 @@ public class @DefaultControls : IInputActionCollection, IDisposable
     private readonly InputAction m_Gameplay_Look;
     private readonly InputAction m_Gameplay_Jump;
     private readonly InputAction m_Gameplay_Sprint;
-    private readonly InputAction m_Gameplay_Interact;
+    private readonly InputAction m_Gameplay_Attack;
     public struct GameplayActions
     {
         private @DefaultControls m_Wrapper;
@@ -316,7 +316,7 @@ public class @DefaultControls : IInputActionCollection, IDisposable
         public InputAction @Look => m_Wrapper.m_Gameplay_Look;
         public InputAction @Jump => m_Wrapper.m_Gameplay_Jump;
         public InputAction @Sprint => m_Wrapper.m_Gameplay_Sprint;
-        public InputAction @Interact => m_Wrapper.m_Gameplay_Interact;
+        public InputAction @Attack => m_Wrapper.m_Gameplay_Attack;
         public InputActionMap Get() { return m_Wrapper.m_Gameplay; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -338,9 +338,9 @@ public class @DefaultControls : IInputActionCollection, IDisposable
                 @Sprint.started -= m_Wrapper.m_GameplayActionsCallbackInterface.OnSprint;
                 @Sprint.performed -= m_Wrapper.m_GameplayActionsCallbackInterface.OnSprint;
                 @Sprint.canceled -= m_Wrapper.m_GameplayActionsCallbackInterface.OnSprint;
-                @Interact.started -= m_Wrapper.m_GameplayActionsCallbackInterface.OnInteract;
-                @Interact.performed -= m_Wrapper.m_GameplayActionsCallbackInterface.OnInteract;
-                @Interact.canceled -= m_Wrapper.m_GameplayActionsCallbackInterface.OnInteract;
+                @Attack.started -= m_Wrapper.m_GameplayActionsCallbackInterface.OnAttack;
+                @Attack.performed -= m_Wrapper.m_GameplayActionsCallbackInterface.OnAttack;
+                @Attack.canceled -= m_Wrapper.m_GameplayActionsCallbackInterface.OnAttack;
             }
             m_Wrapper.m_GameplayActionsCallbackInterface = instance;
             if (instance != null)
@@ -357,9 +357,9 @@ public class @DefaultControls : IInputActionCollection, IDisposable
                 @Sprint.started += instance.OnSprint;
                 @Sprint.performed += instance.OnSprint;
                 @Sprint.canceled += instance.OnSprint;
-                @Interact.started += instance.OnInteract;
-                @Interact.performed += instance.OnInteract;
-                @Interact.canceled += instance.OnInteract;
+                @Attack.started += instance.OnAttack;
+                @Attack.performed += instance.OnAttack;
+                @Attack.canceled += instance.OnAttack;
             }
         }
     }
@@ -388,6 +388,6 @@ public class @DefaultControls : IInputActionCollection, IDisposable
         void OnLook(InputAction.CallbackContext context);
         void OnJump(InputAction.CallbackContext context);
         void OnSprint(InputAction.CallbackContext context);
-        void OnInteract(InputAction.CallbackContext context);
+        void OnAttack(InputAction.CallbackContext context);
     }
 }

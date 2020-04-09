@@ -5,6 +5,7 @@ using UnityEngine;
 public class PlayerCamera : MonoBehaviour
 {
     private Camera cam;
+    private Vector3 camLocalPos;
     private float defaultDistanceToCam;
     private float distanceToCam;
     private LayerMask mask;
@@ -16,6 +17,7 @@ public class PlayerCamera : MonoBehaviour
     void Start()
     {
         cam = FindObjectOfType<Camera>();
+        camLocalPos = cam.transform.localPosition;
         defaultDistanceToCam = Vector3.Distance(transform.position, cam.transform.position);
         mask = LayerMask.GetMask("NotClippable");
     }
@@ -25,7 +27,7 @@ public class PlayerCamera : MonoBehaviour
         Vector3 direction = cam.transform.position - transform.position;
         distanceToCam = Vector3.Distance(transform.position, cam.transform.position);
 
-        if (Physics.SphereCast(transform.position, 1f, direction, out hit, distanceToCam, mask))
+        if (Physics.SphereCast(transform.position, 0.5f, direction, out hit, distanceToCam, mask))
         {
             float distanceToCollision = Vector3.Distance(transform.position, hit.point);
 
@@ -45,9 +47,9 @@ public class PlayerCamera : MonoBehaviour
     {
         if (distanceToCam < defaultDistanceToCam)
         {
-            Vector3 resetPos = cam.transform.position - cameraZoomOffset + direction;
-            Vector3 newCamPos = Vector3.Lerp(cam.transform.position, resetPos, lerpDelta);
-            cam.transform.position = newCamPos;
+            //Vector3 resetPos = cam.transform.position - cameraZoomOffset + direction;
+            Vector3 newCamPos = Vector3.Lerp(cam.transform.localPosition, camLocalPos, lerpDelta);
+            cam.transform.localPosition = newCamPos;
         }
     }
 }

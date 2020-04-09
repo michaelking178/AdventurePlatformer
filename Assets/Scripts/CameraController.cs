@@ -5,6 +5,9 @@ using UnityEngine;
 public class CameraController : MonoBehaviour
 {
     [SerializeField] private float rotationSpeed = 1.0f;
+    [SerializeField] private GameObject target;
+    [SerializeField] private Vector3 targetOffset;
+    [SerializeField] private float lerpDelta = 0.1f;
 
     private float pitch;
     private float yaw;
@@ -31,6 +34,7 @@ public class CameraController : MonoBehaviour
 
     private void FixedUpdate()
     {
+        transform.position = Vector3.Lerp(transform.position, target.transform.position + targetOffset, lerpDelta);
         Rotate(cameraInput);
     }
 

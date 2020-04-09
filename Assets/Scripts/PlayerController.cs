@@ -21,6 +21,9 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Vector3 jumpForce;
     [SerializeField] private Vector3 gravityForce;
 
+    [Header("Rotation")]
+    [SerializeField] private float onTheSpotRotationSpeed = 3f;
+
     private float currentSpeed;
     private float sprintSpeed;
     private float previousHeight;
@@ -154,7 +157,7 @@ public class PlayerController : MonoBehaviour
             Vector3 targetDirection = transform.position - camPos;
 
             // Determine rotation needed to face the target direction
-            float singleStep = currentSpeed * Time.fixedDeltaTime;
+            float singleStep = currentSpeed * onTheSpotRotationSpeed * Time.fixedDeltaTime;
             Vector3 newDirection = Vector3.RotateTowards(transform.forward, targetDirection, singleStep, 0.0f);
 
             // Apply rotation

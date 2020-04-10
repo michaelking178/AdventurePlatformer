@@ -45,11 +45,22 @@ public class PlayerCamera : MonoBehaviour
 
     private void ResetCamera(Vector3 direction)
     {
-        if (distanceToCam < defaultDistanceToCam)
+        if (distanceToCam < defaultDistanceToCam && CamIsOutsideDeadzone())
         {
-            //Vector3 resetPos = cam.transform.position - cameraZoomOffset + direction;
             Vector3 newCamPos = Vector3.Lerp(cam.transform.localPosition, camLocalPos, lerpDelta);
             cam.transform.localPosition = newCamPos;
         }
+    }
+
+    private bool CamIsOutsideDeadzone()
+    {
+        Vector3 playerPos = transform.position;
+        Vector3 camPos = cam.transform.position;
+
+        if (Mathf.Abs(playerPos.x - camPos.x) > 1 || Mathf.Abs(playerPos.y - camPos.y) > 1 || Mathf.Abs(playerPos.z - camPos.z) > 1)
+        {
+            return true;
+        }
+        return false;
     }
 }

@@ -32,11 +32,12 @@ public class PlayerController : MonoBehaviour
     private Camera cam;
     private Animator anim;
     private bool isSprinting;
+    private int jumpCount;
 
     private DefaultControls controls;
     private Vector2 movementInput;
-    RaycastHit groundHit;
-    Ray ray;
+    private Ray ray;
+    private State previousState;
 
     private void Awake()
     {
@@ -48,7 +49,7 @@ public class PlayerController : MonoBehaviour
         controls.Gameplay.Sprint.canceled += ctx => isSprinting = ctx.ReadValueAsButton();
 
         controls.Gameplay.Jump.performed += ctx => Jump();
-        controls.Gameplay.Attack.performed += ctx => Attack();
+        controls.Gameplay.Attack.performed += ctx => StartCoroutine(Attack());
     }
 
     private void OnEnable()
@@ -77,18 +78,21 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
+        Debug.Log("Current State: " + state + ", Previous State: " + previousState);
+
         DebugStuff();
-        CheckForGround();
         StateManager();
+        CheckForGround();
     }
 
     private void FixedUpdate()
     {
+        rb.AddForce(gravityForce);
+
         if (state != State.ATTACKING)
         {
             Move(movementInput);
         }
-        rb.AddForce(gravityForce);
     }
 
     private void StateManager()
@@ -99,6 +103,7 @@ public class PlayerController : MonoBehaviour
                 anim.SetBool("isGrounded", true);
                 anim.SetBool("isFalling", false);
                 SetRunningSpeed(movementInput);
+                jumpCount = 0;
                 break;
 
             case State.JUMPING:
@@ -106,7 +111,7 @@ public class PlayerController : MonoBehaviour
                 anim.SetBool("isFalling", false);
                 if (ReachedJumpPeak())
                 {
-                    state = State.FALLING;
+                    SetState(State.FALLING);
                 }
                 break;
 
@@ -126,7 +131,7 @@ public class PlayerController : MonoBehaviour
     private bool ReachedJumpPeak()
     {
         float currentHeight = transform.position.y;
-        if (currentHeight - previousHeight < 0.1f)
+        if (currentHeight - previousHeight < -0f)
         {
             return true;
         }
@@ -188,36 +193,56 @@ public class PlayerController : MonoBehaviour
 
     private void Jump()
     {
-        if (state == State.GROUNDED)
+        if (jumpCount == 0)
         {
             rb.AddForce(jumpForce, ForceMode.Impulse);
-            state = State.JUMPING;
             anim.SetTrigger("Jump");
+            SetState(State.JUMPING);
+            jumpCount++;
+        }
+        else if (jumpCount == 1)
+        {
+            SetState(State.JUMPING);
+            rb.AddForce(jumpForce, ForceMode.Impulse);
+            anim.SetTrigger("Double Jump");
+            jumpCount++;
         }
     }
 
-    private void Attack()
+    private IEnumerator Attack()
     {
-        if (state == State.GROUNDED && state != State.ATTACKING)
-        {
+        if (state == State.GROUNDED && state != State.ATTACKING) // Must be grounded, and cannot attack while already attacking!
+        {            
             anim.SetTrigger("Attack");
-            state = State.ATTACKING;
+            SetState(State.ATTACKING);
+            yield return new WaitForSeconds(0.5f);
+            SetState(previousState);
         }
     }
 
     private void CheckForGround()
     {
+        RaycastHit groundHit;
         ray.origin = new Vector3(transform.position.x, transform.position.y + 1f, transform.position.z);
         ray.direction = Vector3.down;
 
-        if (Physics.SphereCast(ray, 0.25f, out groundHit, 1f) && groundHit.transform.CompareTag("Ground"))
+        if (Physics.Raycast(ray, out groundHit, 1.01f) && groundHit.transform.CompareTag("Ground") && state != State.ATTACKING)
         {
-            state = State.GROUNDED;
+            SetState(State.GROUNDED);
         }
-        else if (state != State.JUMPING)
+        else if (state != State.JUMPING && state != State.ATTACKING)
         {
-            state = State.FALLING;
+            SetState(State.FALLING);
         }
+    }
+
+    private void SetState(State newState)
+    {
+        if (previousState != newState)
+        {
+            previousState = state;
+        }
+        state = newState;
     }
 
     void DebugStuff()

@@ -25,9 +25,12 @@ public class PlayerController : MonoBehaviour
     [Header("Rotation")]
     [SerializeField] private float onTheSpotRotationSpeed = 3f;
 
+    [Header("Gear")]
+    [SerializeField] private GameObject currentWeapon;
+
     private float currentSpeed;
-    private float sprintSpeed;
     private float previousHeight;
+    private float doubleJumpTime = 0f;
     private State state;
     private Rigidbody rb;
     private Camera cam;
@@ -38,6 +41,8 @@ public class PlayerController : MonoBehaviour
     private Vector2 movementInput;
     private Ray ray;
     private State previousState;
+
+    private Transform handNode;
 
     private void Awake()
     {
@@ -70,6 +75,17 @@ public class PlayerController : MonoBehaviour
         cam = FindObjectOfType<Camera>();
         rb = GetComponent<Rigidbody>();
         currentSpeed = defaultSpeed;
+
+        foreach (Transform childTransform in transform.GetComponentsInChildren<Transform>())
+        {
+            if (childTransform.name == "Hand Node")
+            {
+                handNode = childTransform;
+            }
+        }
+        currentWeapon.transform.parent = handNode;
+        currentWeapon.transform.localPosition = Vector3.zero;
+        currentWeapon.transform.localRotation = Quaternion.Euler(0f, 0f, 0f);
     }
 
     private void Update()
@@ -164,9 +180,6 @@ public class PlayerController : MonoBehaviour
             transform.rotation = Quaternion.LookRotation(newDirection);
         }
     }
-
-
-    float doubleJumpTime = 0f;
 
     private void Jump()
     {

@@ -176,7 +176,7 @@ public class @DefaultControls : IInputActionCollection, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""f3df61aa-199d-44bf-a147-8af27fc18bd4"",
-                    ""path"": ""<Keyboard>/e"",
+                    ""path"": ""<Mouse>/leftButton"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Keyboard&Mouse"",

@@ -27,7 +27,7 @@ public class PlayerCamera : MonoBehaviour
         Vector3 direction = cam.transform.position - transform.position;
         distanceToCam = Vector3.Distance(transform.position, cam.transform.position);
 
-        if (Physics.SphereCast(transform.position, 0.5f, direction, out hit, distanceToCam, mask))
+        if (Physics.Raycast(transform.position, direction, out hit, distanceToCam, mask))
         {
             float distanceToCollision = Vector3.Distance(transform.position, hit.point);
 

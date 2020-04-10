@@ -1190,8 +1190,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   defaultSpeed: 7
-  sprintModifier: 1.75
   jumpForce: {x: 0, y: 15, z: 0}
+  doubleJumpForce: {x: 0, y: 10, z: 0}
+  doubleJumpDelayModifier: 3.5
   gravityForce: {x: 0, y: -28, z: 0}
   onTheSpotRotationSpeed: 3
 --- !u!95 &957829259

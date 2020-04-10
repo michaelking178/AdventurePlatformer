@@ -15,10 +15,11 @@ public class PlayerController : MonoBehaviour
 
     [Header("Speed")]
     [SerializeField] private float defaultSpeed = 10f;
-    [SerializeField] private float sprintModifier = 1.75f;
 
     [Header("Jump")]
     [SerializeField] private Vector3 jumpForce;
+    [SerializeField] private Vector3 doubleJumpForce;
+    [SerializeField] private float doubleJumpDelayModifier = 4f;
     [SerializeField] private Vector3 gravityForce;
 
     [Header("Rotation")]
@@ -31,7 +32,6 @@ public class PlayerController : MonoBehaviour
     private Rigidbody rb;
     private Camera cam;
     private Animator anim;
-    private bool isSprinting;
     private int jumpCount;
 
     private DefaultControls controls;
@@ -44,10 +44,6 @@ public class PlayerController : MonoBehaviour
         controls = new DefaultControls();
         controls.Gameplay.Move.performed += ctx => movementInput = ctx.ReadValue<Vector2>();
         controls.Gameplay.Move.canceled += ctx => movementInput = ctx.ReadValue<Vector2>();
-
-        controls.Gameplay.Sprint.performed += ctx => isSprinting = ctx.ReadValueAsButton();
-        controls.Gameplay.Sprint.canceled += ctx => isSprinting = ctx.ReadValueAsButton();
-
         controls.Gameplay.Jump.performed += ctx => Jump();
         controls.Gameplay.Attack.performed += ctx => StartCoroutine(Attack());
     }
@@ -62,6 +58,7 @@ public class PlayerController : MonoBehaviour
         controls.Gameplay.Move.performed -= ctx => movementInput = ctx.ReadValue<Vector2>();
         controls.Gameplay.Move.canceled -= ctx => movementInput = ctx.ReadValue<Vector2>();
         controls.Gameplay.Jump.performed -= ctx => Jump();
+        controls.Gameplay.Attack.performed -= ctx => StartCoroutine(Attack());
         controls.Disable();
     }
 
@@ -73,13 +70,10 @@ public class PlayerController : MonoBehaviour
         cam = FindObjectOfType<Camera>();
         rb = GetComponent<Rigidbody>();
         currentSpeed = defaultSpeed;
-        sprintSpeed = defaultSpeed * sprintModifier;
     }
 
     private void Update()
     {
-        Debug.Log("Current State: " + state + ", Previous State: " + previousState);
-
         DebugStuff();
         StateManager();
         CheckForGround();
@@ -102,7 +96,6 @@ public class PlayerController : MonoBehaviour
             case State.GROUNDED:
                 anim.SetBool("isGrounded", true);
                 anim.SetBool("isFalling", false);
-                SetRunningSpeed(movementInput);
                 jumpCount = 0;
                 break;
 
@@ -153,6 +146,8 @@ public class PlayerController : MonoBehaviour
         }
 
         transform.Translate(movement);
+        anim.SetFloat("Speed", movementAxis.y);
+        anim.SetFloat("Strafe", movementAxis.x);
 
         // Rotate the character upon receiving movement input
         if (movementAxis.x != 0 || movementAxis.y != 0)
@@ -170,26 +165,8 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private void SetRunningSpeed(Vector3 movementAxis)
-    {
-        // Slow the running animation so that when sprinting, the character looks like they are running faster.
-        float animMovementAxis = movementAxis.y;
-        float animStrafeAxis = movementAxis.x;
 
-        if (state == State.GROUNDED && isSprinting)
-        {
-            currentSpeed = sprintSpeed;
-        }
-        else
-        {
-            currentSpeed = defaultSpeed;
-            animMovementAxis *= 0.75f;
-            animStrafeAxis *= 0.75f;
-        }
-
-        anim.SetFloat("Speed", animMovementAxis);
-        anim.SetFloat("Strafe", animStrafeAxis);
-    }
+    float doubleJumpTime = 0f;
 
     private void Jump()
     {
@@ -199,13 +176,17 @@ public class PlayerController : MonoBehaviour
             anim.SetTrigger("Jump");
             SetState(State.JUMPING);
             jumpCount++;
+            doubleJumpTime = Time.time;
         }
         else if (jumpCount == 1)
         {
+            doubleJumpTime = Time.time - doubleJumpTime;
+            Debug.Log("Double Jump Time: " + doubleJumpTime);
             SetState(State.JUMPING);
-            rb.AddForce(jumpForce, ForceMode.Impulse);
+            rb.AddForce(doubleJumpForce * (doubleJumpTime * doubleJumpDelayModifier), ForceMode.Impulse);
             anim.SetTrigger("Double Jump");
             jumpCount++;
+            doubleJumpTime = 0;
         }
     }
 

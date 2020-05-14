@@ -193,7 +193,7 @@ public class PlayerController : MonoBehaviour
         }
         else if (jumpCount == 1)
         {
-            doubleJumpTime = Time.time - doubleJumpTime;
+            doubleJumpTime = Mathf.Clamp(Time.time - doubleJumpTime, 0f, 0.6f);
             Debug.Log("Double Jump Time: " + doubleJumpTime);
             SetState(State.JUMPING);
             rb.AddForce(doubleJumpForce * (doubleJumpTime * doubleJumpDelayModifier), ForceMode.Impulse);

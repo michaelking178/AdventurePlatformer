@@ -9,8 +9,8 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: Rough Brick Wall 01
   m_Shader: {fileID: 46, guid: 0000000000000000f000000000000000, type: 0}
-  m_ShaderKeywords: _METALLICGLOSSMAP _NORMALMAP _PARALLAXMAP
-  m_LightmapFlags: 5
+  m_ShaderKeywords: _EMISSION _METALLICGLOSSMAP _NORMALMAP _PARALLAXMAP
+  m_LightmapFlags: 1
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
@@ -45,11 +45,11 @@ Material:
         m_Offset: {x: 0, y: 0}
     - _EmissionMap:
         m_Texture: {fileID: 0}
-        m_Scale: {x: 4, y: 4}
+        m_Scale: {x: 0.1, y: 0.1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
         m_Texture: {fileID: 2800000, guid: 142eac3ed62b90e4698167a63f697aa4, type: 3}
-        m_Scale: {x: 1, y: 1}
+        m_Scale: {x: 0.1, y: 0.1}
         m_Offset: {x: 0, y: 0}
     - _MainTex2:
         m_Texture: {fileID: 0}
@@ -157,10 +157,12 @@ Material:
     - _GlitterMask: 0
     - _GlitterShown: 1
     - _GlitterTiling: 1
+    - _GlossMapScale: 1
     - _GlossMax: 1
     - _GlossMin: 0
     - _Glossiness: 0.5
     - _Glossiness2: 1
+    - _GlossyReflections: 1
     - _MainShown: 1
     - _Metallic: 0
     - _Metallic2: 1
@@ -202,6 +204,7 @@ Material:
     - _ShadowCull: 2
     - _ShadowMIPbias: 0
     - _ShadowStrength: 1
+    - _SmoothnessTextureChannel: 0
     - _Snow: 0
     - _SnowBumpMacro: 0.1
     - _SnowBumpMicro: 0.08
@@ -224,6 +227,7 @@ Material:
     - _SnowWorldMapping: 0
     - _Softness: 2
     - _SoftnessFade: 0.4
+    - _SpecularHighlights: 1
     - _SrcBlend: 1
     - _Tan2ObjCustomU: 1
     - _Tan2ObjCustomV: 1

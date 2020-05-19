@@ -39,7 +39,9 @@ public class PlayerController : MonoBehaviour
 
     private DefaultControls controls;
     private Vector2 movementInput;
-    private Ray ray;
+    private Ray[] rays = new Ray[9];
+    private float rightOffset = 0.333f;
+    private float forwardOffset = 0.25f;
     private State previousState;
 
     private Transform handNode;
@@ -97,7 +99,10 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        rb.AddForce(gravityForce);
+        if (rb.velocity.y >= -9.89f)
+        {
+            rb.AddForce(gravityForce);
+        }
 
         if (state != State.ATTACKING)
         {
@@ -194,7 +199,6 @@ public class PlayerController : MonoBehaviour
         else if (jumpCount == 1)
         {
             doubleJumpTime = Mathf.Clamp(Time.time - doubleJumpTime, 0f, 0.6f);
-            Debug.Log("Double Jump Time: " + doubleJumpTime);
             SetState(State.JUMPING);
             rb.AddForce(doubleJumpForce * (doubleJumpTime * doubleJumpDelayModifier), ForceMode.Impulse);
             anim.SetTrigger("Double Jump");
@@ -205,28 +209,51 @@ public class PlayerController : MonoBehaviour
 
     private IEnumerator Attack()
     {
-        if (state == State.GROUNDED && state != State.ATTACKING) // Must be grounded, and cannot attack while already attacking!
-        {            
-            anim.SetTrigger("Attack");
-            SetState(State.ATTACKING);
-            yield return new WaitForSeconds(0.5f);
-            SetState(previousState);
+        if (state != State.ATTACKING)
+        {
+            if (state == State.GROUNDED) // Must be grounded, and cannot attack while already attacking!
+            {
+                anim.SetTrigger("Attack");
+                SetState(State.ATTACKING);
+                yield return new WaitForSeconds(0.5f);
+                SetState(previousState);
+            }
+            else if (state == State.JUMPING || state == State.FALLING)
+            {
+                anim.SetTrigger("Jump Attack");
+                SetState(State.ATTACKING);
+                yield return new WaitForSeconds(0.5f);
+                SetState(previousState);
+            }
         }
     }
 
     private void CheckForGround()
     {
+        bool isGrounded = false;
         RaycastHit groundHit;
-        ray.origin = new Vector3(transform.position.x, transform.position.y + 1f, transform.position.z);
-        ray.direction = Vector3.down;
+        SetRayPositions();
 
-        if (Physics.Raycast(ray, out groundHit, 1.01f) && groundHit.transform.CompareTag("Ground") && state != State.ATTACKING)
+        for(int i = 0; i < rays.Length; i++)
+        {
+            rays[i].direction = Vector3.down;
+
+            if (Physics.Raycast(rays[i], out groundHit, 1.01f) && groundHit.transform.CompareTag("Ground") && state != State.ATTACKING)
+            {
+                isGrounded = true;
+            }
+        }
+
+        if (isGrounded)
         {
             SetState(State.GROUNDED);
         }
-        else if (state != State.JUMPING && state != State.ATTACKING)
+        else
         {
-            SetState(State.FALLING);
+            if (state != State.JUMPING && state != State.ATTACKING)
+            {
+                SetState(State.FALLING);
+            }
         }
     }
 
@@ -237,6 +264,19 @@ public class PlayerController : MonoBehaviour
             previousState = state;
         }
         state = newState;
+    }
+
+    private void SetRayPositions()
+    {
+        rays[0].origin = new Vector3(transform.position.x - rightOffset, transform.position.y + 1f, transform.position.z + forwardOffset);
+        rays[1].origin = new Vector3(transform.position.x, transform.position.y + 1f, transform.position.z + forwardOffset);
+        rays[2].origin = new Vector3(transform.position.x + rightOffset, transform.position.y + 1f, transform.position.z + forwardOffset);
+        rays[3].origin = new Vector3(transform.position.x - rightOffset, transform.position.y + 1f, transform.position.z);
+        rays[4].origin = new Vector3(transform.position.x, transform.position.y + 1f, transform.position.z);
+        rays[5].origin = new Vector3(transform.position.x + rightOffset, transform.position.y + 1f, transform.position.z);
+        rays[6].origin = new Vector3(transform.position.x - rightOffset, transform.position.y + 1f, transform.position.z - forwardOffset);
+        rays[7].origin = new Vector3(transform.position.x, transform.position.y + 1f, transform.position.z - forwardOffset);
+        rays[8].origin = new Vector3(transform.position.x + rightOffset, transform.position.y + 1f, transform.position.z - forwardOffset);
     }
 
     void DebugStuff()

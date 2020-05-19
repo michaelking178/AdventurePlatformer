@@ -73,9 +73,15 @@ public class Hover : MonoBehaviour
         float targetY = waypoints[target].y;
         float yDistance = targetY - transform.position.y;
         Vector3 antiGrav = new Vector3(0f, yDistance, 0f);
-        //float currentVelY = rb.velocity.y;
-        //Vector3 antiGravityForce = new Vector3(0f, -currentVelY, 0f);
-
         rb.AddForce(antiGrav, ForceMode.Impulse);
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        foreach (Vector3 waypoint in waypoints)
+        {
+            Gizmos.DrawSphere(waypoint, 0.5f);
+            Gizmos.color = Color.cyan;
+        }
     }
 }

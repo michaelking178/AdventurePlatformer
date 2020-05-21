@@ -5,36 +5,24 @@ using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
-    private enum State
-    {
-        GROUNDED,
-        JUMPING,
-        FALLING,
-        ATTACKING
-    };
-
-    [Header("Speed")]
-    [SerializeField] private float defaultSpeed = 10f;
-
     [Header("Jump")]
-    [SerializeField] private Vector3 jumpForce;
-    [SerializeField] private Vector3 doubleJumpForce;
-    [SerializeField] private float doubleJumpDelayModifier = 4f;
-    [SerializeField] private Vector3 gravityForce;
+    [SerializeField]
+    private Vector3 jumpForce;
 
-    [Header("Rotation")]
-    [SerializeField] private float onTheSpotRotationSpeed = 3f;
+    [SerializeField]
+    private Vector3 doubleJumpForce;
 
-    [Header("Gear")]
-    [SerializeField] private GameObject currentWeapon;
+    [SerializeField]
+    private float doubleJumpDelayModifier = 4f;
 
-    private float currentSpeed;
-    private float previousHeight;
+    [SerializeField]
+    private Vector3 gravityBoost;
+
     private float doubleJumpTime = 0f;
-    private State state;
     private Rigidbody rb;
-    private Camera cam;
     private Animator anim;
+    private Movement movement;
+    private StateHandler stateHandler;
     private int jumpCount;
 
     private DefaultControls controls;
@@ -42,9 +30,6 @@ public class PlayerController : MonoBehaviour
     private Ray[] rays = new Ray[9];
     private float rightOffset = 0.333f;
     private float forwardOffset = 0.25f;
-    private State previousState;
-
-    private Transform handNode;
 
     private void Awake()
     {
@@ -74,26 +59,14 @@ public class PlayerController : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
 
         anim = GetComponent<Animator>();
-        cam = FindObjectOfType<Camera>();
         rb = GetComponent<Rigidbody>();
-        currentSpeed = defaultSpeed;
-
-        foreach (Transform childTransform in transform.GetComponentsInChildren<Transform>())
-        {
-            if (childTransform.name == "Hand Node")
-            {
-                handNode = childTransform;
-            }
-        }
-        currentWeapon.transform.parent = handNode;
-        currentWeapon.transform.localPosition = Vector3.zero;
-        currentWeapon.transform.localRotation = Quaternion.Euler(0f, 0f, 0f);
+        movement = GetComponent<Movement>();
+        stateHandler = GetComponent<StateHandler>();
     }
 
     private void Update()
     {
         DebugStuff();
-        StateManager();
         CheckForGround();
     }
 
@@ -101,88 +74,12 @@ public class PlayerController : MonoBehaviour
     {
         if (rb.velocity.y >= -9.89f)
         {
-            rb.AddForce(gravityForce);
+            rb.AddForce(gravityBoost);
         }
 
-        if (state != State.ATTACKING)
+        if (!stateHandler.Compare("ATTACKING"))
         {
-            Move(movementInput);
-        }
-    }
-
-    private void StateManager()
-    {
-        switch (state)
-        {
-            case State.GROUNDED:
-                anim.SetBool("isGrounded", true);
-                anim.SetBool("isFalling", false);
-                jumpCount = 0;
-                break;
-
-            case State.JUMPING:
-                anim.SetBool("isGrounded", false);
-                anim.SetBool("isFalling", false);
-                if (ReachedJumpPeak())
-                {
-                    SetState(State.FALLING);
-                }
-                break;
-
-            case State.FALLING:
-                anim.SetBool("isFalling", true);
-                anim.SetBool("isGrounded", false);
-                break;
-
-            case State.ATTACKING:
-                break;
-
-            default:
-                break;
-        }
-    }
-
-    private bool ReachedJumpPeak()
-    {
-        float currentHeight = transform.position.y;
-        if (currentHeight - previousHeight < -0f)
-        {
-            return true;
-        }
-        previousHeight = currentHeight;
-        return false;
-    }
-
-    private void Move(Vector2 movementAxis)
-    {
-        Vector3 movement = new Vector3(movementAxis.x * Time.fixedDeltaTime * currentSpeed, 0f, movementAxis.y * Time.fixedDeltaTime * currentSpeed);
-
-        // Slow down strafe movement a bit
-        movement.x *= 0.85f;
-
-        // Slow down backward movement
-        if (movement.z < 0f)
-        {
-            movement.z *= 0.5f;
-        }
-
-        transform.Translate(movement);
-        anim.SetFloat("Speed", movementAxis.y);
-        anim.SetFloat("Strafe", movementAxis.x);
-
-        // Rotate the character upon receiving movement input
-        if (movementAxis.x != 0 || movementAxis.y != 0)
-        {
-            // Direction to rotate toward
-            Vector3 camPos = new Vector3(cam.transform.position.x, transform.position.y, cam.transform.position.z);
-            Vector3 targetDirection = transform.position - camPos;
-
-            // Determine rotation needed to face the target direction
-            float singleStep = currentSpeed * onTheSpotRotationSpeed * Time.fixedDeltaTime;
-            Vector3 newDirection = Vector3.RotateTowards(transform.forward, targetDirection, singleStep, 0.0f);
-
-            // Apply rotation
-            transform.rotation = Quaternion.LookRotation(newDirection);
+            movement.Move(movementInput);
         }
     }
 
@@ -192,14 +89,14 @@ public class PlayerController : MonoBehaviour
         {
             rb.AddForce(jumpForce, ForceMode.Impulse);
             anim.SetTrigger("Jump");
-            SetState(State.JUMPING);
+            stateHandler.SetState("JUMPING");
             jumpCount++;
             doubleJumpTime = Time.time;
         }
         else if (jumpCount == 1)
         {
             doubleJumpTime = Mathf.Clamp(Time.time - doubleJumpTime, 0f, 0.6f);
-            SetState(State.JUMPING);
+            stateHandler.SetState("JUMPING");
             rb.AddForce(doubleJumpForce * (doubleJumpTime * doubleJumpDelayModifier), ForceMode.Impulse);
             anim.SetTrigger("Double Jump");
             jumpCount++;
@@ -209,21 +106,21 @@ public class PlayerController : MonoBehaviour
 
     private IEnumerator Attack()
     {
-        if (state != State.ATTACKING)
+        if (!stateHandler.Compare("ATTACKING"))
         {
-            if (state == State.GROUNDED) // Must be grounded, and cannot attack while already attacking!
+            if (stateHandler.Compare("GROUNDED")) // Must be grounded, and cannot attack while already attacking!
             {
                 anim.SetTrigger("Attack");
-                SetState(State.ATTACKING);
+                stateHandler.SetState("ATTACKING");
                 yield return new WaitForSeconds(0.5f);
-                SetState(previousState);
+                stateHandler.SetState(stateHandler.GetPreviousState());
             }
-            else if (state == State.JUMPING || state == State.FALLING)
+            else if (stateHandler.Compare("JUMPING") || stateHandler.Compare("FALLING"))
             {
                 anim.SetTrigger("Jump Attack");
-                SetState(State.ATTACKING);
+                stateHandler.SetState("ATTACKING");
                 yield return new WaitForSeconds(0.5f);
-                SetState(previousState);
+                stateHandler.SetState(stateHandler.GetPreviousState());
             }
         }
     }
@@ -238,32 +135,24 @@ public class PlayerController : MonoBehaviour
         {
             rays[i].direction = Vector3.down;
 
-            if (Physics.Raycast(rays[i], out groundHit, 1.01f) && groundHit.transform.CompareTag("Ground") && state != State.ATTACKING)
+            if (Physics.Raycast(rays[i], out groundHit, 1.01f) && groundHit.transform.CompareTag("Ground") && !stateHandler.Compare("ATTACKING"))
             {
                 isGrounded = true;
+                jumpCount = 0;
             }
         }
 
         if (isGrounded)
         {
-            SetState(State.GROUNDED);
+            stateHandler.SetState("GROUNDED");
         }
         else
         {
-            if (state != State.JUMPING && state != State.ATTACKING)
+            if (!stateHandler.Compare("JUMPING") && !stateHandler.Compare("ATTACKING"))
             {
-                SetState(State.FALLING);
+                stateHandler.SetState("FALLING");
             }
         }
-    }
-
-    private void SetState(State newState)
-    {
-        if (previousState != newState)
-        {
-            previousState = state;
-        }
-        state = newState;
     }
 
     private void SetRayPositions()

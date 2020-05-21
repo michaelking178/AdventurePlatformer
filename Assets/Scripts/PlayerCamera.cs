@@ -10,6 +10,7 @@ public class PlayerCamera : MonoBehaviour
     private float distanceToCam;
     private LayerMask mask;
     private RaycastHit hit;
+    private bool camIsSquished;
 
     [SerializeField] private float lerpDelta = 0.1f;
     [SerializeField] private Vector3 cameraZoomOffset = new Vector3();
@@ -22,25 +23,30 @@ public class PlayerCamera : MonoBehaviour
         mask = LayerMask.GetMask("NotClippable");
     }
 
-    void FixedUpdate()
+    void Update()
     {
         Vector3 direction = cam.transform.position - transform.position;
         distanceToCam = Vector3.Distance(transform.position, cam.transform.position);
+        float rayOffset = 1f;
 
-        if (Physics.Raycast(transform.position, direction, out hit, distanceToCam, mask))
+        if (Physics.Raycast(transform.position, direction, out hit, distanceToCam + rayOffset, mask))
         {
             float distanceToCollision = Vector3.Distance(transform.position, hit.point);
 
             if (distanceToCam >= distanceToCollision)
-            {                
+            {
+                camIsSquished = true;
                 cam.transform.position = Vector3.MoveTowards(cam.transform.position, transform.position + cameraZoomOffset, lerpDelta);
                 distanceToCam = Vector3.Distance(transform.position, cam.transform.position);
             }
         }
         else
         {
+            camIsSquished = false;
             ResetCamera(direction);
         }
+
+        Debug.Log(camIsSquished);
     }
 
     private void ResetCamera(Vector3 direction)

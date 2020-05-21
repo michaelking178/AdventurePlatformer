@@ -19,6 +19,9 @@ public class Hover : MonoBehaviour
     [SerializeField]
     private float gain = 5f;
 
+    [SerializeField]
+    private float antigravityBoost = 50f;
+
     private Rigidbody rb;
 
     // Waypoints
@@ -70,10 +73,26 @@ public class Hover : MonoBehaviour
 
     private void AdjustForGravity()
     {
+        float originY = waypoints[current].y;
         float targetY = waypoints[target].y;
-        float yDistance = targetY - transform.position.y;
-        Vector3 antiGrav = new Vector3(0f, yDistance, 0f);
-        rb.AddForce(antiGrav, ForceMode.Impulse);
+
+        float totalDistance = Vector3.Distance(waypoints[current], waypoints[target]);
+        float distanceTravelled = Vector3.Distance(transform.position, waypoints[current]);
+        float percentTravelled = Mathf.Abs(distanceTravelled / totalDistance);
+
+        float currentY = Mathf.Lerp(originY, targetY, percentTravelled);
+
+        if (transform.position.y < currentY)
+        {
+            float yDifference = currentY - transform.position.y;
+            Vector3 antiGrav = new Vector3(0f, yDifference * antigravityBoost, 0f);
+            rb.AddForce(antiGrav);
+
+            if (name == "Hover Platform Small (1)")
+            {
+                Debug.Log(yDifference);
+            }
+        }
     }
 
     private void OnDrawGizmosSelected()

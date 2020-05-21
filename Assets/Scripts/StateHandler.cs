@@ -96,6 +96,15 @@ public class StateHandler : MonoBehaviour
         return previousState;
     }
 
+
+    /// <summary>
+    /// Reverts the State Handler's State to its previous State.
+    /// </summary>
+    public void Revert()
+    {
+        state = previousState;
+    }
+
     /// <summary>
     /// Compares the State Handler's current state to the state name provided. State name must match an existing State enum key.
     /// </summary>

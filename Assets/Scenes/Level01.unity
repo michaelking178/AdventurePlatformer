@@ -14752,6 +14752,10 @@ PrefabInstance:
       propertyPath: waypoints.Array.data[0].y
       value: 86.75
       objectReference: {fileID: 0}
+    - target: {fileID: 975762016, guid: 9eb2642dea4ac5147ae45335672c6f9a, type: 3}
+      propertyPath: antigravityBoost
+      value: 50
+      objectReference: {fileID: 0}
     - target: {fileID: 975762017, guid: 9eb2642dea4ac5147ae45335672c6f9a, type: 3}
       propertyPath: m_UseGravity
       value: 1
@@ -20418,6 +20422,10 @@ PrefabInstance:
     - target: {fileID: 975762016, guid: 9eb2642dea4ac5147ae45335672c6f9a, type: 3}
       propertyPath: maxVel
       value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 975762016, guid: 9eb2642dea4ac5147ae45335672c6f9a, type: 3}
+      propertyPath: antigravityBoost
+      value: 50
       objectReference: {fileID: 0}
     - target: {fileID: 975762017, guid: 9eb2642dea4ac5147ae45335672c6f9a, type: 3}
       propertyPath: m_UseGravity

@@ -28,8 +28,8 @@ public class PlayerController : MonoBehaviour
     private DefaultControls controls;
     private Vector2 movementInput;
     private Ray[] rays = new Ray[9];
-    private float rightOffset = 0.333f;
-    private float forwardOffset = 0.25f;
+    private float rightOffset = 0.25f;
+    private float forwardOffset = 0.2f;
 
     private void Awake()
     {
@@ -113,14 +113,14 @@ public class PlayerController : MonoBehaviour
                 anim.SetTrigger("Attack");
                 stateHandler.SetState("ATTACKING");
                 yield return new WaitForSeconds(0.5f);
-                stateHandler.SetState(stateHandler.GetPreviousState());
+                stateHandler.Revert();
             }
             else if (stateHandler.Compare("JUMPING") || stateHandler.Compare("FALLING"))
             {
                 anim.SetTrigger("Jump Attack");
                 stateHandler.SetState("ATTACKING");
                 yield return new WaitForSeconds(0.5f);
-                stateHandler.SetState(stateHandler.GetPreviousState());
+                stateHandler.Revert();
             }
         }
     }

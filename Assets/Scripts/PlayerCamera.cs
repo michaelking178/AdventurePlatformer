@@ -45,8 +45,6 @@ public class PlayerCamera : MonoBehaviour
             camIsSquished = false;
             ResetCamera(direction);
         }
-
-        Debug.Log(camIsSquished);
     }
 
     private void ResetCamera(Vector3 direction)

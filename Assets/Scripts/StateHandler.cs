@@ -18,6 +18,7 @@ public class StateHandler : MonoBehaviour
     private State previousState;
     private Animator anim;
     private float previousHeight;
+    private float jumpCount = 0;
 
     void Start()
     {
@@ -31,6 +32,7 @@ public class StateHandler : MonoBehaviour
             case State.GROUNDED:
                 anim.SetBool("isGrounded", true);
                 anim.SetBool("isFalling", false);
+                jumpCount = 0;
                 break;
 
             case State.JUMPING:

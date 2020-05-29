@@ -60,6 +60,7 @@ public class AIController : MonoBehaviour
     private void MoveToward(Vector3 targetPos)
     {
         float distance = Vector3.Distance(transform.position, player.transform.position);
+
         if (distance < attackReach)
         {
             // Stop
@@ -88,12 +89,17 @@ public class AIController : MonoBehaviour
     private void WatchForPlayer()
     {
         float distanceToPlayer = Vector3.Distance(transform.position, player.transform.position);
+        NavMeshPath path = new NavMeshPath();
 
-        if (distanceToPlayer < lineOfSight)
+        if (distanceToPlayer < lineOfSight && !navMeshAgent.CalculatePath(currentTarget, path))
+        {
+            currentTarget = player.transform.position;
+            speed = 0f;
+        }
+        else if (distanceToPlayer < lineOfSight && navMeshAgent.CalculatePath(currentTarget, path))
         {
             currentTarget = player.transform.position;
             speed = runSpeed;
-            
         }
         else
         {
@@ -102,7 +108,7 @@ public class AIController : MonoBehaviour
         }
     }
 
-    private void OnDrawGizmos()
+private void OnDrawGizmos()
     {
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, lineOfSight);

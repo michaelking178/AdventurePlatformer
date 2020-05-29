@@ -8,6 +8,9 @@ public class Entity : MonoBehaviour
     private Animator anim;
 
     [SerializeField]
+    private int hitpoints = 10;
+
+    [SerializeField]
     private float attackTime = 0.5f;
 
     // Start is called before the first frame update
@@ -36,5 +39,11 @@ public class Entity : MonoBehaviour
                 stateHandler.Revert();
             }
         }
+    }
+
+    public void ReceiveDamage(int damage)
+    {
+        hitpoints -= damage;
+        Debug.Log("Hitpoints: " + hitpoints);
     }
 }

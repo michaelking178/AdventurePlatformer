@@ -5,7 +5,9 @@ using UnityEngine;
 public class Entity : MonoBehaviour
 {
     private StateHandler stateHandler;
+    private GearHandler gearHandler;
     private Animator anim;
+    private Gear gear;
 
     [SerializeField]
     private int hitpoints = 10;
@@ -13,37 +15,55 @@ public class Entity : MonoBehaviour
     [SerializeField]
     private float attackTime = 0.5f;
 
-    // Start is called before the first frame update
     private void Start()
     {
         stateHandler = GetComponent<StateHandler>();
+        gearHandler = GetComponent<GearHandler>();
         anim = GetComponent<Animator>();
+        gear = gearHandler.GetCurrentGear();
+    }
+
+    private void Update()
+    {
+        if (hitpoints <= 0)
+        {
+            Destroy(gameObject);
+        }
     }
 
     public IEnumerator Attack()
     {
-        if (!stateHandler.Compare("ATTACKING"))
+        if (stateHandler.Compare("ATTACKING"))
         {
-            if (stateHandler.Compare("GROUNDED")) // Must be grounded, and cannot attack while already attacking!
-            {
-                anim.SetTrigger("Attack");
-                stateHandler.SetState("ATTACKING");
-                yield return new WaitForSeconds(attackTime);
-                stateHandler.Revert();
-            }
-            else if (stateHandler.Compare("JUMPING") || stateHandler.Compare("FALLING"))
-            {
-                anim.SetTrigger("Jump Attack");
-                stateHandler.SetState("ATTACKING");
-                yield return new WaitForSeconds(attackTime);
-                stateHandler.Revert();
-            }
+            yield return null;
+        }
+
+        if (stateHandler.Compare("GROUNDED"))
+        {
+            anim.SetTrigger("Attack");
+            // The AttackHit() method is called by the animation
+        }
+        else if (stateHandler.Compare("JUMPING") || stateHandler.Compare("FALLING"))
+        {
+            anim.SetTrigger("Jump Attack");
+        }
+
+        stateHandler.SetState("ATTACKING");
+        yield return new WaitForSeconds(attackTime);
+        stateHandler.Revert();
+    }
+
+    private void ApplyAttack()
+    {
+        if (gear.AttackContact())
+        {
+            gear.Target().GetComponent<Entity>().ReceiveDamage(gear.Damage());
+            Instantiate(gear.HitEffect(), transform.position, Quaternion.identity);
         }
     }
 
     public void ReceiveDamage(int damage)
     {
         hitpoints -= damage;
-        Debug.Log("Hitpoints: " + hitpoints);
     }
 }

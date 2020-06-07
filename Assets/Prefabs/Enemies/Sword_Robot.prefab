@@ -870,7 +870,7 @@ GameObject:
   - component: {fileID: 4499274592316520967}
   m_Layer: 0
   m_Name: Sword_Robot
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -911,7 +911,7 @@ Animator:
   m_GameObject: {fileID: 1288477029494930}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: fec0465e27f5e5b41b12e24a733dbc21, type: 3}
-  m_Controller: {fileID: 0}
+  m_Controller: {fileID: 22100000, guid: 419ad531acd09e445b11632d56722010, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 1
@@ -961,6 +961,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: db7611ddb4b02844e8c9bc396663329e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  hitpoints: 10
   attackTime: 1
 --- !u!114 &1916947510
 MonoBehaviour:

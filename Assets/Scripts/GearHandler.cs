@@ -20,11 +20,23 @@ public class GearHandler : MonoBehaviour
             }
         }
 
+        SetGear();
+    }
+
+    public void SetGear()
+    {
         if (currentGear != null)
         {
             currentGear.transform.parent = handNode;
             currentGear.transform.localPosition = Vector3.zero;
             currentGear.transform.localRotation = Quaternion.Euler(0f, 0f, 0f);
+
+            currentGear.GetComponent<Gear>().SetUser(gameObject);
         }
+    }
+
+    public Gear GetCurrentGear()
+    {
+        return currentGear.GetComponent<Gear>();
     }
 }

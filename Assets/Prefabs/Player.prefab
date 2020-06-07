@@ -240,6 +240,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: db7611ddb4b02844e8c9bc396663329e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  hitpoints: 10
   attackTime: 0.5
 --- !u!114 &7894500887306004404
 MonoBehaviour:
@@ -928,7 +929,7 @@ SkinnedMeshRenderer:
   m_Quality: 0
   m_UpdateWhenOffscreen: 0
   m_SkinnedMotionVectors: 1
-  m_Mesh: {fileID: 4300000, guid: 8909e7aa923862f4abbfd053c0f0088e, type: 3}
+  m_Mesh: {fileID: 3312548062075476057, guid: 8909e7aa923862f4abbfd053c0f0088e, type: 3}
   m_Bones:
   - {fileID: 5947912011520099541}
   - {fileID: 5947754009282756335}

@@ -169,8 +169,9 @@ public class PlayerController : MonoBehaviour
         for (int i = 0; i < rays.Length; i++)
         {
             rays[i].direction = Vector3.down;
+            float rayLength = 1.1f;
 
-            if (Physics.Raycast(rays[i], out groundHit, 1.01f) && groundHit.transform.CompareTag("Ground") && !stateHandler.Compare("ATTACKING"))
+            if (Physics.Raycast(rays[i], out groundHit, rayLength) && groundHit.transform.CompareTag("Ground") && !stateHandler.Compare("ATTACKING"))
             {
                 isGrounded = true;
                 jumpCount = 0;
